@@ -1,26 +1,33 @@
 
 {
   "short_name": "فيفو لايف",
-  "name": "فيفو لايف: Vivo Live",
-  "description": "منصة الدردشة الصوتية العربية الأحدث بميزات تفاعلية وألعاب.",
+  "name": "فيفو لايف - Vivo Live Official",
+  "description": "تطبيق الدردشة الصوتية العربي الرسمي - غرف تفاعلية، ألعاب، وهدايا حصرية.",
   "icons": [
     {
       "src": "https://storage.googleapis.com/static.aistudio.google.com/stables/2025/03/06/f0e64906-e7e0-4a87-af9b-029e2467d302/f0e64906-e7e0-4a87-af9b-029e2467d302.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "https://storage.googleapis.com/static.aistudio.google.com/stables/2025/03/06/f0e64906-e7e0-4a87-af9b-029e2467d302/f0e64906-e7e0-4a87-af9b-029e2467d302.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "https://storage.googleapis.com/static.aistudio.google.com/stables/2025/03/06/f0e64906-e7e0-4a87-af9b-029e2467d302/f0e64906-e7e0-4a87-af9b-029e2467d302.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "start_url": "/",
   "display": "standalone",
+  "background_color": "#020617",
   "theme_color": "#0f172a",
-  "background_color": "#0f172a",
   "orientation": "portrait",
-  "scope": "/"
+  "scope": "/",
+  "categories": ["social", "entertainment", "chat"]
 }
