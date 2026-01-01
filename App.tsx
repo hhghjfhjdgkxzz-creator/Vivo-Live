@@ -214,14 +214,11 @@ export default function App() {
     if (!user || !user.isAgency) return;
     if ((user.agencyBalance || 0) < amount) return alert('رصيد الوكالة لا يكفي!');
 
-    // 1. تحديث محلي فوري (Optimistic UI)
     const originalUser = { ...user };
     const originalUsers = [...users];
 
-    // تحديث رصيد الوكيل فوراً
     setUser(prev => prev ? { ...prev, agencyBalance: (prev.agencyBalance || 0) - amount } : null);
     
-    // تحديث رصيد المستهدف في القائمة المحلية فوراً
     setUsers(prev => prev.map(u => u.id === targetId ? { 
       ...u, 
       coins: (u.coins || 0) + amount,
@@ -229,11 +226,9 @@ export default function App() {
       rechargeLevel: calculateLvl((u.rechargePoints || 0) + amount)
     } : u));
 
-    // إغلاق النافذة فوراً لسرعة التجربة
     setShowAgencyModal(false);
     
     try {
-      // 2. المزامنة مع قاعدة البيانات في الخلفية
       const batch = writeBatch(db);
       const agentRef = doc(db, 'users', user.id);
       const targetRef = doc(db, 'users', targetId);
@@ -245,10 +240,8 @@ export default function App() {
       });
 
       await batch.commit();
-      // النجاح صامت لأننا حدثنا الواجهة بالفعل، أو يمكن إظهار توست بسيط
     } catch (e) {
       console.error("Background sync failed:", e);
-      // في حال الفشل النادر، نعيد البيانات لأصلها وننبه المستخدم
       setUser(originalUser);
       setUsers(originalUsers);
       alert('فشل الشحن في الخلفية، يرجى التحقق من الاتصال');
