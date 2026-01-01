@@ -58,6 +58,7 @@ export default function App() {
   const [pendingRoom, setPendingRoom] = useState<Room | null>(null);
   const [roomPassword, setRoomPassword] = useState('');
   
+  // استخدام اللوجو المخزن أو الافتراضي مباشرة لتجنب الوميض
   const [appLogo, setAppLogo] = useState(() => {
     return localStorage.getItem('vivo_live_fixed_logo') || PERMANENT_LOGO_URL;
   });
@@ -108,7 +109,10 @@ export default function App() {
       if (docSnap.exists()) {
         const data = docSnap.data();
         if (data.appBanner) setAppBanner(data.appBanner);
-        if (data.appLogo && data.appLogo !== appLogo) setAppLogo(data.appLogo);
+        if (data.appLogo && data.appLogo !== appLogo) {
+            setAppLogo(data.appLogo);
+            localStorage.setItem('vivo_live_fixed_logo', data.appLogo);
+        }
         if (data.appName) setAppName(data.appName);
         if (data.gameSettings) setGameSettings(data.gameSettings);
       }

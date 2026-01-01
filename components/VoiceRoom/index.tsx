@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Room, User, Gift, GameSettings, GlobalAnnouncement } from '../../types';
-import { X, Lock, Unlock, Palette, Gift as GiftIcon, Zap, Settings2, ShieldCheck, UserMinus, RotateCcw, Trophy, MessageCircle, Send, Award, Star, Trash2, Eraser, LayoutGrid } from 'lucide-react';
+import { X, Lock, Unlock, Palette, Gift as GiftIcon, Zap, Settings2, ShieldCheck, UserMinus, RotateCcw, Trophy, MessageCircle, Send, Award, Star, Trash2, Eraser, LayoutGrid, ListFilter } from 'lucide-react';
 import { db } from '../../services/firebase';
 import { doc, onSnapshot, increment, collection, addDoc, serverTimestamp, setDoc, query, orderBy, limit, getDocs, writeBatch, Timestamp } from 'firebase/firestore';
 
@@ -227,6 +227,21 @@ const VoiceRoom: React.FC<any> = ({
       await onUpdateRoom(room.id, { speakers: resetSpeakers });
       setShowToolsMenu(false);
       alert('تم تصفير الكاريزما بنجاح ✅');
+    } catch (err) { console.error(err); }
+  };
+
+  const handleClearRoomRank = async () => {
+    if (room.hostId !== currentUser.id) return;
+    if (!confirm('هل أنت متأكد من مسح ترتيب الغرفة (الرانك) بالكامل؟ سيتم حذف جميع الداعمين من القائمة لهذه الجلسة.')) return;
+    
+    try {
+      const contribRef = collection(db, 'rooms', room.id, 'contributors');
+      const snap = await getDocs(contribRef);
+      const batch = writeBatch(db);
+      snap.docs.forEach(doc => batch.delete(doc.ref));
+      await batch.commit();
+      setShowToolsMenu(false);
+      alert('تم تصفير الرانك بنجاح ✅');
     } catch (err) { console.error(err); }
   };
 
@@ -517,8 +532,8 @@ const VoiceRoom: React.FC<any> = ({
                     { label: room.isLocked ? 'إلغاء القفل' : 'قفل الغرفة', icon: room.isLocked ? Unlock : Lock, color: room.isLocked ? 'bg-emerald-500' : 'bg-red-500', action: () => { setShowToolsMenu(false); setShowSettingsModal(true); } },
                     { label: 'تغيير الخلفية', icon: Palette, color: 'bg-blue-500', action: () => { setShowToolsMenu(false); setShowSettingsModal(true); } },
                     { label: 'مسح الدردشة', icon: Eraser, color: 'bg-red-600', action: handleClearChat },
-                    { label: 'تصفير الكاريزما', icon: RotateCcw, color: 'bg-indigo-600', action: handleResetAllCharms },
-                    { label: 'قائمة الداعمين', icon: Trophy, color: 'bg-pink-500', action: () => { setShowToolsMenu(false); setShowRankModal(true); } },
+                    { label: 'تصفير المقاعد', icon: RotateCcw, color: 'bg-indigo-600', action: handleResetAllCharms },
+                    { label: 'تصفير الرانك', icon: ListFilter, color: 'bg-pink-600', action: handleClearRoomRank },
                  ].map((tool, idx) => (
                     <button key={idx} onClick={tool.action} className="flex flex-col items-center gap-3 group">
                        <div className={`w-16 h-16 ${tool.color} rounded-[1.5rem] flex items-center justify-center text-white shadow-xl group-active:scale-90 transition-all border border-white/10`}>

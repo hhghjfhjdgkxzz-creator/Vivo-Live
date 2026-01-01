@@ -2,7 +2,7 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import { User, Room } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MessageCircle, Gift, Medal, Award, Trophy, Star, MoreVertical, ShieldCheck, MicOff, UserX, ShieldAlert } from 'lucide-react';
+import { X, MessageCircle, Gift, Medal, Award, Trophy, Star, MoreVertical, ShieldCheck, MicOff, UserX, ShieldAlert, RotateCcw } from 'lucide-react';
 import { db } from '../services/firebase';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, increment } from 'firebase/firestore';
 
@@ -74,7 +74,7 @@ const UserProfileSheet: React.FC<UserProfileSheetProps> = ({ user: initialUser, 
     }
   }, [currentRoom.id, user.id]);
 
-  const handleAdminAction = async (action: 'toggleMod' | 'kickMic' | 'kickRoom') => {
+  const handleAdminAction = async (action: 'toggleMod' | 'kickMic' | 'kickRoom' | 'resetUserCharm') => {
     const roomRef = doc(db, 'rooms', currentRoom.id);
     
     try {
@@ -96,6 +96,13 @@ const UserProfileSheet: React.FC<UserProfileSheetProps> = ({ user: initialUser, 
             kickedUsers: arrayUnion(user.id)
           });
           onClose();
+        }
+      } else if (action === 'resetUserCharm') {
+        if (confirm(`هل تريد تصفير كاريزما ${user.name} على المايك؟`)) {
+          const updatedSpeakers = (currentRoom.speakers || []).map(s => 
+            s.id === user.id ? { ...s, charm: 0 } : s
+          );
+          await updateDoc(roomRef, { speakers: updatedSpeakers });
         }
       }
       setShowAdminMenu(false);
@@ -147,6 +154,10 @@ const UserProfileSheet: React.FC<UserProfileSheetProps> = ({ user: initialUser, 
                            <span className="text-xs font-bold text-white">{targetIsModerator ? 'سحب الإشراف' : 'تعيين مشرف'}</span>
                         </button>
                       )}
+                      <button onClick={() => handleAdminAction('resetUserCharm')} className="w-full p-3 flex items-center gap-3 hover:bg-white/5 border-b border-white/5 text-right" dir="rtl">
+                         <RotateCcw size={16} className="text-blue-500" />
+                         <span className="text-xs font-bold text-white">تصفير الكاريزما</span>
+                      </button>
                       <button onClick={() => handleAdminAction('kickMic')} className="w-full p-3 flex items-center gap-3 hover:bg-white/5 border-b border-white/5 text-right" dir="rtl">
                          <MicOff size={16} className="text-orange-500" />
                          <span className="text-xs font-bold text-white">تنزيل من المايك</span>
