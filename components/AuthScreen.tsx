@@ -29,15 +29,13 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth, appLogo }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // قائمة الإيميلات التي ستحصل على صلاحيات المدير تلقائياً
   const ADMIN_EMAILS = ['admin@coffee.chat', 'superadmin@vivo.live'];
-  
   const LOGO = appLogo || 'https://storage.googleapis.com/static.aistudio.google.com/stables/2025/03/06/f0e64906-e7e0-4a87-af9b-029e2467d302/f0e64906-e7e0-4a87-af9b-029e2467d302.png';
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 1500);
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -120,64 +118,164 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth, appLogo }) => {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full bg-[#020617] flex flex-col items-center justify-center p-6 relative overflow-hidden font-cairo">
+    <div className="min-h-[100dvh] w-full bg-[#020617] flex flex-col items-center justify-center overflow-hidden font-cairo select-none">
+      {/* شاشة الترحيب (Splash) */}
       <AnimatePresence>
         {showSplash && (
-          <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-[#020617] flex flex-col items-center justify-center">
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative">
-              <div className="w-48 h-48 bg-yellow-400 rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white/20">
-                <img src={LOGO} className="w-full h-full object-cover" alt="Splash Logo" />
+          <motion.div 
+            initial={{ opacity: 1 }} 
+            exit={{ opacity: 0 }} 
+            transition={{ duration: 0.5 }}
+            className="fixed inset-0 z-[100] bg-[#020617] flex flex-col items-center justify-center p-6"
+          >
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }} 
+              animate={{ scale: 1, opacity: 1 }} 
+              className="relative"
+            >
+              <div className="w-32 h-32 md:w-44 md:h-44 bg-gradient-to-br from-amber-400 to-orange-500 rounded-[2.5rem] overflow-hidden shadow-[0_0_40px_rgba(245,158,11,0.2)] border-4 border-white/10 flex items-center justify-center p-1">
+                <img src={LOGO} className="w-full h-full object-cover rounded-[2.2rem]" alt="Splash Logo" />
               </div>
+              <motion.div 
+                animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.3, 0.1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-0 bg-amber-500 rounded-full blur-[40px] -z-10"
+              />
             </motion.div>
-            <h1 className="mt-8 text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600">فـيـفـو لايف</h1>
+            <motion.h1 
+              initial={{ y: 15, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="mt-6 text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600"
+            >
+              فـيـفـو لايف
+            </motion.h1>
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: 100 }}
+              className="h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent mt-3 rounded-full"
+            />
           </motion.div>
         )}
       </AnimatePresence>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: showSplash ? 0 : 1, y: 0 }} className="w-full max-w-md z-10">
-        <div className="text-center mb-10">
-          <div className="w-24 h-24 bg-yellow-400 rounded-[2rem] mx-auto mb-4 overflow-hidden shadow-2xl border-2 border-white/10">
-            <img src={LOGO} className="w-full h-full object-cover" alt="Auth Logo" />
-          </div>
-          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600">فـيـفـو لايف</h1>
-          <p className="text-slate-400 text-sm mt-2">عالم من التواصل المباشر والمرح</p>
+      {/* نموذج تسجيل الدخول */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: showSplash ? 0 : 1, y: showSplash ? 20 : 0 }} 
+        className="w-full max-w-[360px] px-6 flex flex-col items-center justify-center h-full overflow-y-auto scrollbar-hide py-4"
+      >
+        <div className="text-center mb-4 w-full shrink-0">
+          <motion.div 
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-[1.8rem] mx-auto mb-2 overflow-hidden shadow-xl border-2 border-white/10 p-0.5"
+          >
+            <img src={LOGO} className="w-full h-full object-cover rounded-[1.6rem]" alt="Auth Logo" />
+          </motion.div>
+          <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600">فـيـفـو لايف</h1>
+          <p className="text-slate-500 text-[9px] font-black mt-1 tracking-[2px] uppercase">Official Live App</p>
         </div>
 
-        <div className="bg-slate-900/50 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] p-8 shadow-2xl">
-          <div className="flex bg-black/40 p-1.5 rounded-2xl mb-8 border border-white/5">
-            <button onClick={() => setIsLogin(true)} className={`flex-1 py-3.5 rounded-xl text-sm font-black transition-all flex items-center justify-center gap-2 ${isLogin ? 'bg-amber-500 text-black shadow-lg' : 'text-slate-500'}`}><LogIn size={18} /> دخول</button>
-            <button onClick={() => setIsLogin(false)} className={`flex-1 py-3.5 rounded-xl text-sm font-black transition-all flex items-center justify-center gap-2 ${!isLogin ? 'bg-amber-500 text-black shadow-lg' : 'text-slate-500'}`}><UserPlus size={18} /> تسجيل</button>
+        <div className="w-full bg-slate-900/60 backdrop-blur-2xl border border-white/5 rounded-[2rem] p-5 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 blur-2xl -z-10 rounded-full" />
+          
+          <div className="flex bg-black/40 p-1 rounded-xl mb-5 border border-white/5">
+            <button 
+              onClick={() => setIsLogin(true)} 
+              className={`flex-1 py-2.5 rounded-lg text-xs font-black transition-all flex items-center justify-center gap-2 ${isLogin ? 'bg-amber-500 text-black shadow-lg' : 'text-slate-500'}`}
+            >
+              <LogIn size={14} /> دخول
+            </button>
+            <button 
+              onClick={() => setIsLogin(false)} 
+              className={`flex-1 py-2.5 rounded-lg text-xs font-black transition-all flex items-center justify-center gap-2 ${!isLogin ? 'bg-amber-500 text-black shadow-lg' : 'text-slate-500'}`}
+            >
+              <UserPlus size={14} /> تسجيل
+            </button>
           </div>
 
-          <form onSubmit={handleAuth} className="space-y-5">
-            {!isLogin && (
-              <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-500 pr-2 uppercase">الاسم المستعار</label>
-                <div className="relative">
-                  <User className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-2xl py-4 pr-12 text-white text-sm outline-none" placeholder="أدخل اسمك" />
-                </div>
+          <form onSubmit={handleAuth} className="space-y-3">
+            <AnimatePresence mode="wait">
+              {!isLogin && (
+                <motion.div 
+                  initial={{ height: 0, opacity: 0 }} 
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="space-y-1 overflow-hidden"
+                >
+                  <label className="text-[9px] font-black text-slate-500 pr-1 uppercase">الاسم المستعار</label>
+                  <div className="relative">
+                    <User className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                    <input 
+                      type="text" 
+                      value={name} 
+                      onChange={(e) => setName(e.target.value)} 
+                      className="w-full bg-black/40 border border-white/5 rounded-xl py-3 pr-10 text-white text-xs outline-none focus:border-amber-500/30 transition-all text-right" 
+                      placeholder="أدخل اسمك" 
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="space-y-1">
+              <label className="text-[9px] font-black text-slate-500 pr-1 uppercase">البريد الإلكتروني</label>
+              <div className="relative">
+                <Mail className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                <input 
+                  type="email" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                  className="w-full bg-black/40 border border-white/5 rounded-xl py-3 pr-10 text-white text-xs outline-none focus:border-amber-500/30 transition-all text-right" 
+                  placeholder="name@email.com" 
+                />
               </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[9px] font-black text-slate-500 pr-1 uppercase">كلمة المرور</label>
+              <div className="relative">
+                <Lock className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                <input 
+                  type="password" 
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)} 
+                  className="w-full bg-black/40 border border-white/5 rounded-xl py-3 pr-10 text-white text-xs outline-none focus:border-amber-500/30 transition-all text-right" 
+                  placeholder="••••••••" 
+                />
+              </div>
+            </div>
+
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }} 
+                animate={{ opacity: 1, scale: 1 }} 
+                className="bg-red-500/10 border border-red-500/20 p-2 rounded-lg text-red-400 text-[10px] font-bold text-center"
+              >
+                {error}
+              </motion.div>
             )}
-            <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-500 pr-2 uppercase">البريد الإلكتروني</label>
-              <div className="relative">
-                <Mail className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-2xl py-4 pr-12 text-white text-sm outline-none" placeholder="your@email.com" />
-              </div>
-            </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-500 pr-2 uppercase">كلمة المرور</label>
-              <div className="relative">
-                <Lock className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-black/40 border border-white/5 rounded-2xl py-4 pr-12 text-white text-sm outline-none" placeholder="••••••••" />
-              </div>
-            </div>
-            {error && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl text-red-400 text-xs font-bold text-center">{error}</motion.div>)}
-            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-amber-500 to-amber-600 py-4 rounded-2xl text-black font-black text-sm shadow-xl active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3 mt-4">
-              {loading ? <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : <><Zap size={18} fill="currentColor" /> {isLogin ? 'تسجيل الدخول' : 'ابدأ الرحلة الآن'}</>}
+
+            <button 
+              type="submit" 
+              disabled={loading} 
+              className="w-full bg-gradient-to-r from-amber-500 to-orange-600 py-3.5 rounded-xl text-black font-black text-xs shadow-lg shadow-amber-900/10 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-4 group"
+            >
+              {loading ? (
+                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Zap size={16} className="group-hover:animate-pulse" fill="currentColor" /> 
+                  {isLogin ? 'تسجيل الدخول' : 'بدء الاستخدام'}
+                </>
+              )}
             </button>
           </form>
+          
+          <div className="mt-6 pt-4 border-t border-white/5 text-center">
+            <p className="text-[8px] text-slate-600 font-bold uppercase tracking-[3px]">VIVO NETWORK SYSTEM</p>
+          </div>
         </div>
       </motion.div>
     </div>
